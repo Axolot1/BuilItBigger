@@ -18,16 +18,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+        free {
+            applicationId "com.axolotl.builditbigger.flavor.free"
+        }
+
+        paid {
+            applicationId "com.axolotl.builditbigger.flavor.paid"
+        }
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:24.0.0-beta1'
-    compile 'com.android.support:support-v4:24.0.0-beta1'
-    compile 'com.google.android.gms:play-services:9.0.0'
     testCompile 'junit:junit:4.12'
     compile project(path: ':backend', configuration: 'android-endpoints')
-    compile project(':jokegenlib')
     compile project(':jokedisplay')
-
+    compile 'com.android.support:appcompat-v7:24.0.0-beta1'
+    compile 'com.android.support:support-v4:24.0.0-beta1'
+    freeCompile 'com.google.android.gms:play-services:9.0.0'
 }
