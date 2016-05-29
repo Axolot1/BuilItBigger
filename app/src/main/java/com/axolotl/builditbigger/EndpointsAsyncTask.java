@@ -1,12 +1,8 @@
 package com.axolotl.builditbigger;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.util.Pair;
-import android.widget.Toast;
 
-import com.axolotl.jokedisplay.JokeActivity;
 import com.example.axolotl.myapplication.backend.myApi.MyApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -18,12 +14,12 @@ import java.io.IOException;
 /**
  * Created by axolotl on 16/5/24.
  */
-public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
     private static MyApi myApiService = null;
-    private Context context;
+    private EndPointTaskListener mListener;
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected String doInBackground(Void... params) {
         if (myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
@@ -42,8 +38,6 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             myApiService = builder.build();
         }
 
-        context = params[0];
-
         try {
             return myApiService.getJoke().execute().getJoke();
         } catch (IOException e) {
@@ -51,10 +45,19 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
         }
     }
 
+    public void setListener(EndPointTaskListener listener){
+        this.mListener = listener;
+    }
+
     @Override
     protected void onPostExecute(String result) {
-        Intent i = new Intent(context, JokeActivity.class);
-        i.putExtra(JokeActivity.EXTRA_JOKE, result);
-        context.startActivity(i);
+        if(mListener != null){
+            mListener.onComplete(result);
+        }
+
+    }
+
+    public interface EndPointTaskListener{
+        void onComplete(String result);
     }
 }
